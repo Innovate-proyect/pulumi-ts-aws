@@ -1,0 +1,31 @@
+{
+  "name": "pulumi-serverless-aws",
+  "version": "1.0.0",
+  "description": "Librería para desarrollar tecnología Serverless con Pulumi",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "devDependencies": {
+    "@types/node": "^18",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@pulumi/archive": "^0.2.0"
+  },
+  "peerDependencies": {
+    "@pulumi/aws": "^6.0.0",
+    "@pulumi/awsx": "^2.0.2",
+    "@pulumi/pulumi": "^3.113.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jhansdelacruz/pulumi-serverless-aws.git"
+  },
+  "keywords": [
+    "pulumi-ts-aws",
+    "libreria pulumi aws"
+  ]
+}

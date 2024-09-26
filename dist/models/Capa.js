@@ -68,7 +68,7 @@ class Capa {
             this.optenerDependencias(nombreCapa, versionCapa);
         }
         const capaComprimida = crearzip.comprimirCodigo({
-            nombreZip: `capapy_${versionFormateado}`,
+            nombreZip: `${versionFormateado}_${nombreFormateado}`,
             ruta: `recursosPulumi/capas_${primerDirectorio}/${nombreCapa}/pylayer`,
         });
         const capa = new aws.lambda.LayerVersion(`sls_${nombreFormateado}`, {

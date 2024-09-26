@@ -58,7 +58,7 @@ export class Capa implements ICapa {
     }
 
     const capaComprimida = crearzip.comprimirCodigo({
-      nombreZip: `capapy_${versionFormateado}`,
+      nombreZip: `${versionFormateado}_${nombreFormateado}`,
       ruta: `recursosPulumi/capas_${primerDirectorio}/${nombreCapa}/pylayer`,
     });
 

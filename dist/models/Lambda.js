@@ -40,7 +40,7 @@ class Funcion {
         const nombreDirectorio = (0, utils_1.obtenerPrimerDirectorio)(arg.codigoFuente.ruta);
         const nombreFormateado = (0, utils_1.eliminarCaracteresEspecialesYEspacios)(nombreDirectorio);
         const codigoFuente = crearzip.comprimirCodigo({
-            nombreZip: nombreDirectorio,
+            nombreZip: `fn${arg.runtime}_${nombreFormateado}`,
             ruta: `src/funciones/${arg.codigoFuente.ruta}`,
             archivosExcluidos: arg.codigoFuente.archivosExcluidos
         });

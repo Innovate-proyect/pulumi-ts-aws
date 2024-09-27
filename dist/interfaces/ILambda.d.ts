@@ -3,7 +3,7 @@ import { IEvento } from './IEvento';
 export interface IFuncionArgs {
     roleArn: TPInputArn;
     handler: TPInputCadena;
-    runtime: TPInputCadena;
+    runtime: string;
     capas?: TPInputArrayArn;
     variablesEntorno?: TPInputMapCadena;
     etiquetas: TPInputMapCadena;

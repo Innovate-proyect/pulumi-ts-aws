@@ -25,19 +25,10 @@ export class Capa implements ICapa {
       if (fs.existsSync(pathOutput)) {
         fs.rmSync(pathOutput, { recursive: true, force: true });
       }
-
-      // Crear el entorno virtual
-      execSync(`${vPython} -m venv ${pathOutput}/create_layer`);
-
-      // Activar el entorno virtual
-      execSync(`source ${pathOutput}/create_layer/bin/activate && pip install -r ${pathInput}/requirements.txt`, { shell: '/bin/bash' });
-
-      // Crear el directorio
-      execSync(`mkdir -p ${pathOutput}/pylayer/python`);
-
-      // Copiar las bibliotecas
-      execSync(`cp -r ${pathOutput}/create_layer/lib ${pathOutput}/pylayer/python/`);
-
+      execSync(`${vPython} -m venv ${pathOutput}/create_layer`); // Crear el entorno virtual
+      execSync(`source ${pathOutput}/create_layer/bin/activate && pip install -r ${pathInput}/requirements.txt`, { shell: '/bin/bash' }); // Activar el entorno virtual
+      execSync(`mkdir -p ${pathOutput}/pylayer/python`); // Crear el directorio
+      execSync(`cp -r ${pathOutput}/create_layer/lib ${pathOutput}/pylayer/python/`); // Copiar las bibliotecas
     } catch (error) {
       console.error('Error ejecutando comandos:', error);
     }

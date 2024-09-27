@@ -35,23 +35,19 @@ class Capa {
         const config = new pulumi.Config("aws");
         this.region = config.require("region");
     }
-    optenerDependencias(basePath, vPython) {
-        const pathInput = `${process.cwd()}/src/capas/python/${basePath}`;
-        const pathOutput = `${process.cwd()}/recursosPulumi/capas_python/${basePath}`;
+    optenerDependenciasPython(capa, vPython) {
+        const pathInput = `${process.cwd()}/src/capas/python/${capa}`;
+        const pathOutput = `${process.cwd()}/build/libs/ly_${vPython}/${capa}`;
         try {
-            console.log(`Creando layers ${basePath}...`);
+            console.log(`Creando layers ${capa}...`);
             // Eliminar pathOutput existe
             if (fs.existsSync(pathOutput)) {
                 fs.rmSync(pathOutput, { recursive: true, force: true });
             }
-            // Crear el entorno virtual
-            (0, child_process_1.execSync)(`${vPython} -m venv ${pathOutput}/create_layer`);
-            // Activar el entorno virtual
-            (0, child_process_1.execSync)(`source ${pathOutput}/create_layer/bin/activate && pip install -r ${pathInput}/requirements.txt`, { shell: '/bin/bash' });
-            // Crear el directorio
-            (0, child_process_1.execSync)(`mkdir -p ${pathOutput}/pylayer/python`);
-            // Copiar las bibliotecas
-            (0, child_process_1.execSync)(`cp -r ${pathOutput}/create_layer/lib ${pathOutput}/pylayer/python/`);
+            (0, child_process_1.execSync)(`${vPython} -m venv ${pathOutput}/create_layer`); // Crear el entorno virtual
+            (0, child_process_1.execSync)(`source ${pathOutput}/create_layer/bin/activate && pip install -r ${pathInput}/requirements.txt`, { shell: '/bin/bash' }); // Activar el entorno virtual
+            (0, child_process_1.execSync)(`mkdir -p ${pathOutput}/pylayer/python`); // Crear el directorio
+            (0, child_process_1.execSync)(`cp -r ${pathOutput}/create_layer/lib ${pathOutput}/pylayer/python/`); // Copiar las bibliotecas
         }
         catch (error) {
             console.error('Error ejecutando comandos:', error);
@@ -62,14 +58,13 @@ class Capa {
         const primerDirectorio = (0, utils_1.obtenerPrimerDirectorio)(arg.ruta);
         const nombreCapa = (0, utils_1.obtenerUltimoDirectorio)(arg.ruta);
         const nombreFormateado = (0, utils_1.eliminarCaracteresEspecialesYEspacios)(nombreCapa);
-        const versionCapa = arg.compatibleRuntimes[0];
-        const versionFormateado = (0, utils_1.eliminarCaracteresEspecialesYEspacios)(versionCapa);
+        const runTimes = arg.compatibleRuntimes[0];
         if (primerDirectorio == "python") {
-            this.optenerDependencias(nombreCapa, versionCapa);
+            this.optenerDependenciasPython(nombreCapa, runTimes);
         }
         const capaComprimida = crearzip.comprimirCodigo({
-            nombreZip: `${versionFormateado}_${nombreFormateado}`,
-            ruta: `recursosPulumi/capas_${primerDirectorio}/${nombreCapa}/pylayer`,
+            nombreZip: `ly${runTimes}_${nombreFormateado}`,
+            ruta: `build/libs/ly_${runTimes}/${nombreCapa}/pylayer`,
         });
         const capa = new aws.lambda.LayerVersion(`sls_${nombreFormateado}`, {
             code: new pulumi.asset.FileArchive(capaComprimida.then((cont) => cont.outputPath)),

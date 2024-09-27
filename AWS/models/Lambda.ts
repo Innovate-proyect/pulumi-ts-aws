@@ -23,7 +23,7 @@ export class Funcion implements IFuncion {
     const nombreFormateado = eliminarCaracteresEspecialesYEspacios(nombreDirectorio)
 
     const codigoFuente = crearzip.comprimirCodigo({
-      nombreZip: nombreDirectorio,
+      nombreZip: `fn${arg.runtime}_${nombreFormateado}`,
       ruta: `src/funciones/${arg.codigoFuente.ruta}`,
       archivosExcluidos: arg.codigoFuente.archivosExcluidos
     });

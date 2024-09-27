@@ -15,12 +15,12 @@ export class Capa implements ICapa {
     const config = new pulumi.Config("aws");
     this.region = config.require("region");
   }
-  private optenerDependencias(basePath: string, vPython: string) {
-    const pathInput = `${process.cwd()}/src/capas/python/${basePath}`
-    const pathOutput = `${process.cwd()}/recursosPulumi/capas_python/${basePath}`
+  private optenerDependenciasPython(capa: string, vPython: string) {
+    const pathInput = `${process.cwd()}/src/capas/python/${capa}`
+    const pathOutput = `${process.cwd()}/build/libs/ly_${vPython}/${capa}`
 
     try {
-      console.log(`Creando layers ${basePath}...`);
+      console.log(`Creando layers ${capa}...`);
       // Eliminar pathOutput existe
       if (fs.existsSync(pathOutput)) {
         fs.rmSync(pathOutput, { recursive: true, force: true });
@@ -43,23 +43,21 @@ export class Capa implements ICapa {
     }
   }
 
-
   public crearCapa(arg: ICapaArgs): TCapa {
 
     const crearzip = new CrearZip()
     const primerDirectorio = obtenerPrimerDirectorio(arg.ruta)
     const nombreCapa = obtenerUltimoDirectorio(arg.ruta)
     const nombreFormateado = eliminarCaracteresEspecialesYEspacios(nombreCapa)
-    const versionCapa = arg.compatibleRuntimes[0]
-    const versionFormateado = eliminarCaracteresEspecialesYEspacios(versionCapa)
+    const runTimes = arg.compatibleRuntimes[0]
 
     if (primerDirectorio == "python") {
-      this.optenerDependencias(nombreCapa, versionCapa)
+      this.optenerDependenciasPython(nombreCapa, runTimes)
     }
 
     const capaComprimida = crearzip.comprimirCodigo({
-      nombreZip: `${versionFormateado}_${nombreFormateado}`,
-      ruta: `recursosPulumi/capas_${primerDirectorio}/${nombreCapa}/pylayer`,
+      nombreZip: `ly${runTimes}_${nombreFormateado}`,
+      ruta: `build/libs/ly_${runTimes}/${nombreCapa}/pylayer`,
     });
 
     const capa = new aws.lambda.LayerVersion(`sls_${nombreFormateado}`, {

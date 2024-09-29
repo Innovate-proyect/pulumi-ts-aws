@@ -2,11 +2,10 @@ import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
 import { ICapa, ICapaArgs } from "../interfaces/ICapa";
 import { TCapa } from "../interfaces/Iglobal";
-import { CrearZip } from './CrearZip';
-import { eliminarCaracteresEspecialesYEspacios, obtenerPrimerDirectorio, obtenerUltimoDirectorio } from "./utils";
+import { eliminarCaracteresEspecialesYEspacios, extraerVersion, generarHashBase64, obtenerPrimerDirectorio, obtenerUltimoDirectorio } from "./utils";
+import { DockerPython } from "../models/DockerPython";
 
-import { execSync } from 'child_process';
-import * as fs from 'fs';
+
 
 export class Capa implements ICapa {
   private region: string;
@@ -15,47 +14,27 @@ export class Capa implements ICapa {
     const config = new pulumi.Config("aws");
     this.region = config.require("region");
   }
-  private optenerDependenciasPython(capa: string, vPython: string) {
-    const pathInput = `${process.cwd()}/src/capas/python/${capa}`
-    const pathOutput = `${process.cwd()}/build/libs/ly_${vPython}/${capa}`
-
-    try {
-      console.log(`Creando layers ${capa}...`);
-      // Eliminar pathOutput existe
-      if (fs.existsSync(pathOutput)) {
-        fs.rmSync(pathOutput, { recursive: true, force: true });
-      }
-      execSync(`${vPython} -m venv ${pathOutput}/create_layer`); // Crear el entorno virtual
-      execSync(`source ${pathOutput}/create_layer/bin/activate && pip install -r ${pathInput}/requirements.txt`, { shell: '/bin/bash' }); // Activar el entorno virtual
-      execSync(`mkdir -p ${pathOutput}/pylayer/python`); // Crear el directorio
-      execSync(`cp -r ${pathOutput}/create_layer/lib ${pathOutput}/pylayer/python/`); // Copiar las bibliotecas
-    } catch (error) {
-      console.error('Error ejecutando comandos:', error);
-    }
-  }
 
   public crearCapa(arg: ICapaArgs): TCapa {
+    const dockerPython = new DockerPython()
 
-    const crearzip = new CrearZip()
     const primerDirectorio = obtenerPrimerDirectorio(arg.ruta)
     const nombreCapa = obtenerUltimoDirectorio(arg.ruta)
     const nombreFormateado = eliminarCaracteresEspecialesYEspacios(nombreCapa)
     const runTimes = arg.compatibleRuntimes[0]
+    const vRunTime = extraerVersion(runTimes)
+
+    const pathOutputZip = `${process.cwd()}/build/dist`;
+    let archivoZip = `ly${runTimes}_${nombreCapa}`;
 
     if (primerDirectorio == "python") {
-      this.optenerDependenciasPython(nombreCapa, runTimes)
+      dockerPython.crearLibPython(nombreCapa, vRunTime, pathOutputZip, archivoZip);
     }
 
-    const capaComprimida = crearzip.comprimirCodigo({
-      nombreZip: `ly${runTimes}_${nombreFormateado}`,
-      ruta: `build/libs/ly_${runTimes}/${nombreCapa}/pylayer`,
-    });
-
+    const codeHash = generarHashBase64(`${pathOutputZip}/${archivoZip}.zip`)
     const capa = new aws.lambda.LayerVersion(`sls_${nombreFormateado}`, {
-      code: new pulumi.asset.FileArchive(
-        capaComprimida.then((cont) => cont.outputPath)
-      ),
-      sourceCodeHash: capaComprimida.then((cont) => cont.outputBase64sha256),
+      code: new pulumi.asset.FileArchive(`${pathOutputZip}/${archivoZip}.zip`),
+      sourceCodeHash: codeHash,
       layerName: nombreCapa,
       compatibleRuntimes: arg.compatibleRuntimes,
       description: arg.descripcion,
@@ -64,3 +43,24 @@ export class Capa implements ICapa {
 
   }
 }
+
+
+
+
+// import { DockerPython } from './DockerPython';
+// import { DockerNode } from './DockerNode';
+
+// class Capa {
+//   public static async crearCapa(capa: string, tipo: 'python' | 'nodejs', version: string) {
+//     if (tipo === 'python') {
+//       await DockerPython.crearLibPython(capa, version);
+//     } else if (tipo === 'nodejs') {
+//       await DockerNode.crearLibPython(capa, version);
+//     } else {
+//       throw new Error(`Tipo de capa ${tipo} no soportado.`);
+//     }
+//   }
+// }
+
+
+// docker build--build - arg vPython = 3.10 - t python - build - capa.

@@ -26,49 +26,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Capa = void 0;
 const aws = __importStar(require("@pulumi/aws"));
 const pulumi = __importStar(require("@pulumi/pulumi"));
-const CrearZip_1 = require("./CrearZip");
 const utils_1 = require("./utils");
-const child_process_1 = require("child_process");
-const fs = __importStar(require("fs"));
+const DockerPython_1 = require("../models/DockerPython");
 class Capa {
     constructor() {
         const config = new pulumi.Config("aws");
         this.region = config.require("region");
     }
-    optenerDependenciasPython(capa, vPython) {
-        const pathInput = `${process.cwd()}/src/capas/python/${capa}`;
-        const pathOutput = `${process.cwd()}/build/libs/ly_${vPython}/${capa}`;
-        try {
-            console.log(`Creando layers ${capa}...`);
-            // Eliminar pathOutput existe
-            if (fs.existsSync(pathOutput)) {
-                fs.rmSync(pathOutput, { recursive: true, force: true });
-            }
-            (0, child_process_1.execSync)(`${vPython} -m venv ${pathOutput}/create_layer`); // Crear el entorno virtual
-            (0, child_process_1.execSync)(`source ${pathOutput}/create_layer/bin/activate && pip install -r ${pathInput}/requirements.txt`, { shell: '/bin/bash' }); // Activar el entorno virtual
-            (0, child_process_1.execSync)(`mkdir -p ${pathOutput}/pylayer/python`); // Crear el directorio
-            (0, child_process_1.execSync)(`cp -r ${pathOutput}/create_layer/lib ${pathOutput}/pylayer/python/`); // Copiar las bibliotecas
-        }
-        catch (error) {
-            console.error('Error ejecutando comandos:', error);
-        }
-    }
     crearCapa(arg) {
-        const crearzip = new CrearZip_1.CrearZip();
+        const dockerPython = new DockerPython_1.DockerPython();
         const primerDirectorio = (0, utils_1.obtenerPrimerDirectorio)(arg.ruta);
         const nombreCapa = (0, utils_1.obtenerUltimoDirectorio)(arg.ruta);
         const nombreFormateado = (0, utils_1.eliminarCaracteresEspecialesYEspacios)(nombreCapa);
         const runTimes = arg.compatibleRuntimes[0];
+        const vRunTime = (0, utils_1.extraerVersion)(runTimes);
+        const pathOutputZip = `${process.cwd()}/build/dist`;
+        let archivoZip = `ly${runTimes}_${nombreCapa}`;
         if (primerDirectorio == "python") {
-            this.optenerDependenciasPython(nombreCapa, runTimes);
+            dockerPython.crearLibPython(nombreCapa, vRunTime, pathOutputZip, archivoZip);
         }
-        const capaComprimida = crearzip.comprimirCodigo({
-            nombreZip: `ly${runTimes}_${nombreFormateado}`,
-            ruta: `build/libs/ly_${runTimes}/${nombreCapa}/pylayer`,
-        });
+        const codeHash = (0, utils_1.generarHashBase64)(`${pathOutputZip}/${archivoZip}.zip`);
         const capa = new aws.lambda.LayerVersion(`sls_${nombreFormateado}`, {
-            code: new pulumi.asset.FileArchive(capaComprimida.then((cont) => cont.outputPath)),
-            sourceCodeHash: capaComprimida.then((cont) => cont.outputBase64sha256),
+            code: new pulumi.asset.FileArchive(`${pathOutputZip}/${archivoZip}.zip`),
+            sourceCodeHash: codeHash,
             layerName: nombreCapa,
             compatibleRuntimes: arg.compatibleRuntimes,
             description: arg.descripcion,
@@ -77,3 +57,17 @@ class Capa {
     }
 }
 exports.Capa = Capa;
+// import { DockerPython } from './DockerPython';
+// import { DockerNode } from './DockerNode';
+// class Capa {
+//   public static async crearCapa(capa: string, tipo: 'python' | 'nodejs', version: string) {
+//     if (tipo === 'python') {
+//       await DockerPython.crearLibPython(capa, version);
+//     } else if (tipo === 'nodejs') {
+//       await DockerNode.crearLibPython(capa, version);
+//     } else {
+//       throw new Error(`Tipo de capa ${tipo} no soportado.`);
+//     }
+//   }
+// }
+// docker build--build - arg vPython = 3.10 - t python - build - capa.

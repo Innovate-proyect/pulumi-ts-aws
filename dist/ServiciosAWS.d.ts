@@ -9,5 +9,5 @@ export declare class ServiciosAWS {
     private capa;
     constructor();
     crearFuncion(args: IFuncionArgs): TFuncion;
-    crearCapa(args: ICapaArgs): TCapa;
+    crearCapaPython(args: ICapaArgs): TCapa;
 }

@@ -20,7 +20,7 @@ export class ServiciosAWS {
     return this.funcion.crearFuncion(args);
   }
 
-  crearCapa(args: ICapaArgs): TCapa {
-    return this.capa.crearCapa(args);
+  crearCapaPython(args: ICapaArgs): TCapa {
+    return this.capa.crearCapaPython(args);
   }
 }

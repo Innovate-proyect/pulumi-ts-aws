@@ -3,5 +3,6 @@ import { TCapa } from "../interfaces/Iglobal";
 export declare class Capa implements ICapa {
     private region;
     constructor();
-    crearCapa(arg: ICapaArgs): TCapa;
+    private crearDockerPython;
+    crearCapaPython(arg: ICapaArgs): TCapa;
 }

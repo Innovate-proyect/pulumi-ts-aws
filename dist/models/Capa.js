@@ -22,35 +22,63 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Capa = void 0;
 const aws = __importStar(require("@pulumi/aws"));
 const pulumi = __importStar(require("@pulumi/pulumi"));
 const utils_1 = require("./utils");
-const DockerPython_1 = require("../models/DockerPython");
+const child_process_1 = require("child_process");
+const path = require("path");
 class Capa {
     constructor() {
         const config = new pulumi.Config("aws");
         this.region = config.require("region");
     }
-    crearCapa(arg) {
-        const dockerPython = new DockerPython_1.DockerPython();
-        const primerDirectorio = (0, utils_1.obtenerPrimerDirectorio)(arg.ruta);
-        const nombreCapa = (0, utils_1.obtenerUltimoDirectorio)(arg.ruta);
-        const nombreFormateado = (0, utils_1.eliminarCaracteresEspecialesYEspacios)(nombreCapa);
-        const runTimes = arg.compatibleRuntimes[0];
-        const vRunTime = (0, utils_1.extraerVersion)(runTimes);
+    crearDockerPython(capa, vPython, pathOutputZip, archivoZip) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const dockerfileSource = path.join(__dirname, "../dockerfiles/Dockerfile.python");
+                const dockerImageName = `python-build-${capa}`;
+                (0, child_process_1.execSync)(`
+        docker build -q -t ${dockerImageName} --build-arg capa=${capa} --build-arg vPython=${vPython} --build-arg nArchivo=${archivoZip} -f ${dockerfileSource} .
+      `);
+                (0, child_process_1.execSync)(`
+        docker run --rm -v ${pathOutputZip}:/output ${dockerImageName} bash -c "cp /app/${archivoZip}.zip /output/"
+      `);
+                (0, child_process_1.execSync)(`docker rmi ${dockerImageName}`);
+            }
+            catch (error) {
+                if (error instanceof Error) {
+                    console.error("Error ejecutando Docker para Python:", error.message);
+                    throw new Error("Error ejecutando Docker para Python: " + error.message);
+                }
+                else {
+                    throw new Error("Error desconocido durante la construccion del layer.");
+                }
+            }
+        });
+    }
+    crearCapaPython(arg) {
+        const nombreFormateado = (0, utils_1.eliminarCaracteresEspecialesYEspacios)(arg.nombre);
+        const vPython = arg.versionesCompatibles[0];
         const pathOutputZip = `${process.cwd()}/build/dist`;
-        let archivoZip = `ly${runTimes}_${nombreCapa}`;
-        if (primerDirectorio == "python") {
-            dockerPython.crearLibPython(nombreCapa, vRunTime, pathOutputZip, archivoZip);
-        }
+        const archivoZip = `lyPython${vPython}_${arg.nombre}`;
+        this.crearDockerPython(arg.nombre, vPython, pathOutputZip, archivoZip);
         const codeHash = (0, utils_1.generarHashBase64)(`${pathOutputZip}/${archivoZip}.zip`);
         const capa = new aws.lambda.LayerVersion(`sls_${nombreFormateado}`, {
-            code: new pulumi.asset.FileArchive(`${pathOutputZip}/${archivoZip}.zip`),
+            code: new pulumi.asset.FileArchive(``),
             sourceCodeHash: codeHash,
-            layerName: nombreCapa,
-            compatibleRuntimes: arg.compatibleRuntimes,
+            layerName: arg.nombre,
+            compatibleRuntimes: arg.versionesCompatibles,
             description: arg.descripcion,
         });
         return capa;

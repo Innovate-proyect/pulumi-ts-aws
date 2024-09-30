@@ -14,8 +14,8 @@ class ServiciosAWS {
     crearFuncion(args) {
         return this.funcion.crearFuncion(args);
     }
-    crearCapa(args) {
-        return this.capa.crearCapa(args);
+    crearCapaPython(args) {
+        return this.capa.crearCapaPython(args);
     }
 }
 exports.ServiciosAWS = ServiciosAWS;

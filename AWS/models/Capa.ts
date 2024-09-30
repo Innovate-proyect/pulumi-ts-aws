@@ -4,7 +4,8 @@ import { ICapa, ICapaArgs } from "../interfaces/ICapa";
 import { TCapa } from "../interfaces/Iglobal";
 import { eliminarCaracteresEspecialesYEspacios, extraerVersion, generarHashBase64, obtenerPrimerDirectorio, obtenerUltimoDirectorio } from "./utils";
 import { DockerPython } from "../models/DockerPython";
-
+import { execSync } from 'child_process';
+const path = require("path");
 
 
 export class Capa implements ICapa {
@@ -15,33 +16,81 @@ export class Capa implements ICapa {
     this.region = config.require("region");
   }
 
-  public crearCapa(arg: ICapaArgs): TCapa {
-    const dockerPython = new DockerPython()
+  private async crearDockerPython(capa: string, vPython: string, pathOutputZip: string, archivoZip: string) {
 
-    const primerDirectorio = obtenerPrimerDirectorio(arg.ruta)
-    const nombreCapa = obtenerUltimoDirectorio(arg.ruta)
-    const nombreFormateado = eliminarCaracteresEspecialesYEspacios(nombreCapa)
-    const runTimes = arg.compatibleRuntimes[0]
-    const vRunTime = extraerVersion(runTimes)
+    try {
+      const dockerfileSource = path.join(
+        __dirname,
+        "../dockerfiles/Dockerfile.python"
+      );
+
+      const dockerImageName = `python-build-${capa}`;
+      execSync(`
+        docker build -q -t ${dockerImageName} --build-arg capa=${capa} --build-arg vPython=${vPython} --build-arg nArchivo=${archivoZip} -f ${dockerfileSource} .
+      `);
+      execSync(`
+        docker run --rm -v ${pathOutputZip}:/output ${dockerImageName} bash -c "cp /app/${archivoZip}.zip /output/"
+      `);
+      execSync(`docker rmi ${dockerImageName}`);
+
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error ejecutando Docker para Python:", error.message);
+        throw new Error("Error ejecutando Docker para Python: " + error.message);
+      } else {
+        throw new Error("Error desconocido durante la construccion del layer.");
+      }
+    }
+  }
+
+  public crearCapaPython(arg: ICapaArgs): TCapa {
+    const nombreFormateado = eliminarCaracteresEspecialesYEspacios(arg.nombre)
+    const vPython = arg.versionesCompatibles[0]
 
     const pathOutputZip = `${process.cwd()}/build/dist`;
-    let archivoZip = `ly${runTimes}_${nombreCapa}`;
+    const archivoZip = `lyPython${vPython}_${arg.nombre}`;
 
-    if (primerDirectorio == "python") {
-      dockerPython.crearLibPython(nombreCapa, vRunTime, pathOutputZip, archivoZip);
-    }
-
+    this.crearDockerPython(arg.nombre, vPython, pathOutputZip, archivoZip)
     const codeHash = generarHashBase64(`${pathOutputZip}/${archivoZip}.zip`)
+
     const capa = new aws.lambda.LayerVersion(`sls_${nombreFormateado}`, {
-      code: new pulumi.asset.FileArchive(`${pathOutputZip}/${archivoZip}.zip`),
+      code: new pulumi.asset.FileArchive(``),
       sourceCodeHash: codeHash,
-      layerName: nombreCapa,
-      compatibleRuntimes: arg.compatibleRuntimes,
+      layerName: arg.nombre,
+      compatibleRuntimes: arg.versionesCompatibles,
       description: arg.descripcion,
     });
     return capa
 
   }
+
+  // public crearCapa(arg: ICapaArgs): TCapa {
+  //   const dockerPython = new DockerPython()
+
+  //   const primerDirectorio = obtenerPrimerDirectorio(arg.ruta)
+  //   const nombreCapa = obtenerUltimoDirectorio(arg.ruta)
+  //   const nombreFormateado = eliminarCaracteresEspecialesYEspacios(nombreCapa)
+  //   const runTimes = arg.compatibleRuntimes[0]
+  //   const vRunTime = extraerVersion(runTimes)
+
+  //   const pathOutputZip = `${process.cwd()}/build/dist`;
+  //   let archivoZip = `ly${runTimes}_${nombreCapa}`;
+
+  //   if (primerDirectorio == "python") {
+  //     dockerPython.crearLibPython(nombreCapa, vRunTime, pathOutputZip, archivoZip);
+  //   }
+
+  //   const codeHash = generarHashBase64(`${pathOutputZip}/${archivoZip}.zip`)
+  //   const capa = new aws.lambda.LayerVersion(`sls_${nombreFormateado}`, {
+  //     code: new pulumi.asset.FileArchive(`${pathOutputZip}/${archivoZip}.zip`),
+  //     sourceCodeHash: codeHash,
+  //     layerName: nombreCapa,
+  //     compatibleRuntimes: arg.compatibleRuntimes,
+  //     description: arg.descripcion,
+  //   });
+  //   return capa
+
+  // }
 }
 
 

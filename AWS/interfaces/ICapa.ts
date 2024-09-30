@@ -1,11 +1,12 @@
 import { TCapa } from "./Iglobal";
 
 export interface ICapaArgs {
-  ruta: string;
-  compatibleRuntimes: string[];
+  nombre: string;
+  versionesCompatibles: string[];
   descripcion: string;
 }
 
 export interface ICapa {
-  crearCapa(arg: ICapaArgs): TCapa;
+  // crearCapa(arg: ICapaArgs): TCapa;
+  crearCapaPython(arg: ICapaArgs): TCapa;
 }

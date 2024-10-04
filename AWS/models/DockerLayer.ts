@@ -11,15 +11,14 @@ export class DockerLayer {
 
 
     const dockerfileContent = `
-FROM python:${pythonVersion}-slim
+FROM python:${pythonVersion}
 
 WORKDIR /app
 
 COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt -t /python
-
-RUN apt-get update && apt-get install -y --no-install-recommends zip
+RUN apt-get update && apt-get install -y zip
 
 RUN zip -r ${nArchivo}.zip /python
 

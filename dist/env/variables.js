@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PREF_S3NOTIFICATION = exports.PREF_S3OBJECT = exports.PREF_S3BUCKET = exports.PREF_LAMBLAYEVERSION = exports.PREF_LAMBPERMISSION = exports.PREF_LAMBFUNTION = exports.PREFIJO = void 0;
 exports.PREFIJO = "ptaws";
-exports.PREF_LAMBFUNTION = `${exports.PREFIJO}_fn_`;
-exports.PREF_LAMBPERMISSION = `${exports.PREFIJO}_fnperm_`;
-exports.PREF_LAMBLAYEVERSION = `${exports.PREFIJO}_lyvers_`;
-exports.PREF_S3BUCKET = `${exports.PREFIJO}_s3_`;
-exports.PREF_S3OBJECT = `${exports.PREFIJO}_s3obj_`;
-exports.PREF_S3NOTIFICATION = `${exports.PREFIJO}_s3notif_`;
+exports.PREF_LAMBFUNTION = `${exports.PREFIJO}_fn:`;
+exports.PREF_LAMBPERMISSION = `${exports.PREFIJO}_fnperm:`;
+exports.PREF_LAMBLAYEVERSION = `${exports.PREFIJO}_lyvers:`;
+exports.PREF_S3BUCKET = `${exports.PREFIJO}_s3:`;
+exports.PREF_S3OBJECT = `${exports.PREFIJO}_s3obj:`;
+exports.PREF_S3NOTIFICATION = `${exports.PREFIJO}_s3notif:`;

@@ -28,6 +28,7 @@ const aws = __importStar(require("@pulumi/aws"));
 const pulumi = __importStar(require("@pulumi/pulumi"));
 const CrearZip_1 = require("./CrearZip");
 const utils_1 = require("./utils");
+const variables_1 = require("../env/variables");
 class Funcion {
     constructor() {
         const config = new pulumi.Config("aws");
@@ -39,12 +40,13 @@ class Funcion {
         const crearzip = new CrearZip_1.CrearZip();
         const nombreDirectorio = (0, utils_1.obtenerPrimerDirectorio)(arg.codigoFuente.ruta);
         const nombreFormateado = (0, utils_1.eliminarCaracteresEspecialesYEspacios)(nombreDirectorio);
+        const nombreRecursoFuncion = (0, utils_1.eliminarCaracteresEspeciales)(nombreDirectorio);
         const codigoFuente = crearzip.comprimirCodigo({
             nombreZip: `fn${arg.runtime}_${nombreFormateado}`,
             ruta: `src/funciones/${arg.codigoFuente.ruta}`,
             archivosExcluidos: arg.codigoFuente.archivosExcluidos
         });
-        const funcion = new aws.lambda.Function(`sls_${nombreFormateado}`, {
+        const funcion = new aws.lambda.Function(`${variables_1.PREF_LAMBFUNTION}${(0, utils_1.eliminarCaracteresEspeciales)(nombreDirectorio)}`, {
             name: nombreDirectorio,
             role: arg.roleArn,
             handler: arg.handler,
@@ -75,7 +77,7 @@ class Funcion {
             for (const evento of arg.eventos) {
                 switch (evento.tipo) {
                     case 's3':
-                        this.crearEventoS3(funcion, evento.parametros, nombreFormateado);
+                        this.crearEventoS3(funcion, evento.parametros, nombreRecursoFuncion);
                         break;
                     default:
                         console.warn(`Tipo de evento no soportado: ${evento.tipo}`);
@@ -84,12 +86,12 @@ class Funcion {
         }
         return funcion;
     }
-    crearEventoS3(funcion, eventoS3, nombreFuncion) {
+    crearEventoS3(funcion, eventoS3, nombreRecursoFuncion) {
         // const nombreS3 = eventoS3.bucketArn.split(':::')[1]
         const bucket = aws.s3.getBucket({
             bucket: eventoS3.nombreBucket,
         });
-        const permisosS3 = new aws.lambda.Permission(`sls_${nombreFuncion}-permiso-${eventoS3.nombreBucket}`, {
+        const permisosS3 = new aws.lambda.Permission(`${variables_1.PREF_LAMBPERMISSION}${nombreRecursoFuncion}${(0, utils_1.eliminarCaracteresEspeciales)(eventoS3.nombreBucket)}`, {
             statementId: "AllowExecutionFromS3Bucket",
             action: "lambda:InvokeFunction",
             function: funcion.arn,
@@ -97,7 +99,7 @@ class Funcion {
             sourceAccount: this.awsAccountId,
             sourceArn: bucket.then(s3 => s3.arn),
         }, { dependsOn: [funcion] });
-        new aws.s3.BucketNotification(`sls_${eventoS3.nombreBucket}-notificacion-${nombreFuncion}`, {
+        new aws.s3.BucketNotification(`${variables_1.PREF_S3NOTIFICATION}${(0, utils_1.eliminarCaracteresEspeciales)(eventoS3.nombreBucket)}${nombreRecursoFuncion}`, {
             bucket: bucket.then(s3 => s3.id),
             lambdaFunctions: [
                 {

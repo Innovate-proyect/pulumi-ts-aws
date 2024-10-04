@@ -1,9 +1,17 @@
 import * as crypto from "crypto";
 import * as fs from "fs";
 
+export function eliminarCaracteresEspeciales(texto: string): string {
+  return texto
+    .replace(/[^a-zA-Z0-9]/g, '')
+    .toLowerCase();
+}
+
 // Solo permite string, number, "_" y "-"
 export function eliminarCaracteresEspecialesYEspacios(texto: string): string {
-  return texto.replace(/[^a-zA-Z0-9_-]/g, '');
+  return texto
+    .replace(/[^a-zA-Z0-9_-]/g, '')
+    .toLowerCase();
 }
 
 export function obtenerPrimerDirectorio(ruta: string): string {
@@ -29,7 +37,4 @@ export function extraerVersion(cadena: string): string {
   const regex = /\d+(\.\d+)*([a-z]+\d*)?/i;
   const resultado = cadena.match(regex);
   return resultado ? resultado[0] : "";
-
-
-
 }

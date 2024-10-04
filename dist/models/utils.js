@@ -23,6 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.eliminarCaracteresEspeciales = eliminarCaracteresEspeciales;
 exports.eliminarCaracteresEspecialesYEspacios = eliminarCaracteresEspecialesYEspacios;
 exports.obtenerPrimerDirectorio = obtenerPrimerDirectorio;
 exports.obtenerUltimoDirectorio = obtenerUltimoDirectorio;
@@ -30,9 +31,16 @@ exports.generarHashBase64 = generarHashBase64;
 exports.extraerVersion = extraerVersion;
 const crypto = __importStar(require("crypto"));
 const fs = __importStar(require("fs"));
+function eliminarCaracteresEspeciales(texto) {
+    return texto
+        .replace(/[^a-zA-Z0-9]/g, '')
+        .toLowerCase();
+}
 // Solo permite string, number, "_" y "-"
 function eliminarCaracteresEspecialesYEspacios(texto) {
-    return texto.replace(/[^a-zA-Z0-9_-]/g, '');
+    return texto
+        .replace(/[^a-zA-Z0-9_-]/g, '')
+        .toLowerCase();
 }
 function obtenerPrimerDirectorio(ruta) {
     const partesRuta = ruta.split('/');

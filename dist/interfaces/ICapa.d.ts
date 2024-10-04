@@ -1,9 +1,12 @@
-import { TCapa } from "./Iglobal";
+import { TCapa, TPythonVersion } from "./Iglobal";
 export interface ICapaArgs {
     nombre: string;
-    versionesCompatibles: string[];
     descripcion: string;
+    requirements: string[];
+}
+export interface ICapaPythonArgs extends ICapaArgs {
+    versionesCompatibles: TPythonVersion[];
 }
 export interface ICapa {
-    crearCapaPython(arg: ICapaArgs): TCapa;
+    crearCapaPython(arg: ICapaPythonArgs): TCapa;
 }

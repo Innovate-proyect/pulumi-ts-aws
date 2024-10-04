@@ -1,8 +1,9 @@
-import { ICapa, ICapaArgs } from "../interfaces/ICapa";
-import { TCapa } from "../interfaces/Iglobal";
+import { ICapa, ICapaPythonArgs } from "../interfaces/ICapa";
+import { TCapa, TS3 } from "../interfaces/Iglobal";
 export declare class Capa implements ICapa {
     private region;
-    constructor();
-    private crearDockerPython;
-    crearCapaPython(arg: ICapaArgs): TCapa;
+    private outputDir;
+    private bucket;
+    constructor(bucket: TS3);
+    crearCapaPython(arg: ICapaPythonArgs): TCapa;
 }

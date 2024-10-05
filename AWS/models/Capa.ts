@@ -12,9 +12,9 @@ import { DockerLayer } from "./DockerLayer";
 export class Capa implements ICapa {
   private region: string;
   private outputDir: string;
-  private bucket: TS3;
+  private bucket: string;
 
-  constructor(bucket: TS3) {
+  constructor(bucket: string) {
     const config = new pulumi.Config("aws");
     this.region = config.require("region");
     this.outputDir = path.join(process.cwd(), 'dist', 'layers');
@@ -39,13 +39,13 @@ export class Capa implements ICapa {
     execSync(`docker rmi ${dockerImageName}`);
 
     const capaZip = new aws.s3.BucketObject(`${PREF_S3OBJECT}${nombreFormateado}`, {
-      bucket: this.bucket.bucket,
+      bucket: this.bucket,
       source: new pulumi.asset.FileAsset(`${this.outputDir}/${nArchivo}.zip`),
-    }, { dependsOn: [this.bucket] });
+    });
 
     const capa = new aws.lambda.LayerVersion(`${PREF_LAMBLAYEVERSION}${nombreFormateado}`, {
       layerName: arg.nombre,
-      s3Bucket: this.bucket.bucket,
+      s3Bucket: this.bucket,
       s3Key: capaZip.key,
       compatibleRuntimes: versionesCompatibles,
       description: arg.descripcion,

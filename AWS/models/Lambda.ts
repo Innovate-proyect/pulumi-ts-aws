@@ -10,9 +10,9 @@ import { PREF_LAMBFUNTION, PREF_LAMBPERMISSION, PREF_S3NOTIFICATION, PREF_S3OBJE
 export class Funcion implements IFuncion {
   private region: string;
   private awsAccountId: Promise<string>
-  private bucket: TS3;
+  private bucket: string;
 
-  constructor(bucket: TS3) {
+  constructor(bucket: string) {
     const config = new pulumi.Config("aws");
     const account = aws.getCallerIdentity({});
     this.region = config.require("region");
@@ -32,11 +32,11 @@ export class Funcion implements IFuncion {
     });
 
     const funcionZip = new aws.s3.BucketObject(`${PREF_S3OBJECT}${nombreFormateado}`, {
-      bucket: this.bucket.bucket,
+      bucket: this.bucket,
       source: new pulumi.asset.FileArchive(
         codigoFuente.then((cont) => cont.outputPath)
       ),
-    }, { dependsOn: [this.bucket] });
+    });
 
     const funcion = new aws.lambda.Function(`${PREF_LAMBFUNTION}${eliminarCaracteresEspeciales(nombreDirectorio)}`, {
       name: nombreDirectorio,
@@ -47,7 +47,7 @@ export class Funcion implements IFuncion {
       architectures: ["x86_64"],
       memorySize: arg.memoria || 128,
       timeout: arg.tiempoEjecucion || 3,
-      s3Bucket: this.bucket.bucket,
+      s3Bucket: this.bucket,
       s3Key: funcionZip.key,
       sourceCodeHash: codigoFuente.then((cont) => cont.outputBase64sha256),
       environment: {

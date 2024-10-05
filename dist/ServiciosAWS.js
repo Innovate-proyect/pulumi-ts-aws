@@ -42,7 +42,7 @@ class ServiciosAWS {
             acl: "private"
         });
         this.capa = new Capa_1.Capa(this.bucket);
-        this.funcion = new Lambda_1.Funcion();
+        this.funcion = new Lambda_1.Funcion(this.bucket);
     }
     crearFuncion(args) {
         return this.funcion.crearFuncion(args);

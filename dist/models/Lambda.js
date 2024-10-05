@@ -30,11 +30,12 @@ const CrearZip_1 = require("./CrearZip");
 const utils_1 = require("./utils");
 const variables_1 = require("../env/variables");
 class Funcion {
-    constructor() {
+    constructor(bucket) {
         const config = new pulumi.Config("aws");
         const account = aws.getCallerIdentity({});
         this.region = config.require("region");
         this.awsAccountId = account.then(id => id.accountId);
+        this.bucket = bucket;
     }
     crearFuncion(arg) {
         const crearzip = new CrearZip_1.CrearZip();
@@ -46,6 +47,10 @@ class Funcion {
             ruta: `src/funciones/${arg.codigoFuente.ruta}`,
             archivosExcluidos: arg.codigoFuente.archivosExcluidos
         });
+        const funcionZip = new aws.s3.BucketObject(`${variables_1.PREF_S3OBJECT}${nombreFormateado}`, {
+            bucket: this.bucket.bucket,
+            source: new pulumi.asset.FileArchive(codigoFuente.then((cont) => cont.outputPath)),
+        }, { dependsOn: [this.bucket] });
         const funcion = new aws.lambda.Function(`${variables_1.PREF_LAMBFUNTION}${(0, utils_1.eliminarCaracteresEspeciales)(nombreDirectorio)}`, {
             name: nombreDirectorio,
             role: arg.roleArn,
@@ -55,7 +60,8 @@ class Funcion {
             architectures: ["x86_64"],
             memorySize: arg.memoria || 128,
             timeout: arg.tiempoEjecucion || 3,
-            code: new pulumi.asset.FileArchive(codigoFuente.then((cont) => cont.outputPath)),
+            s3Bucket: this.bucket.bucket,
+            s3Key: funcionZip.key,
             sourceCodeHash: codigoFuente.then((cont) => cont.outputBase64sha256),
             environment: {
                 variables: arg.variablesEntorno,

@@ -1,21 +1,23 @@
 import { IFuncionArgs, IFuncion } from "../interfaces/ILambda";
 import * as aws from "@pulumi/aws";
-import { TFuncion } from "../interfaces/Iglobal";
+import { TFuncion, TS3 } from "../interfaces/Iglobal";
 import * as pulumi from "@pulumi/pulumi";
 import { CrearZip } from './CrearZip';
 import { eliminarCaracteresEspeciales, eliminarCaracteresEspecialesYEspacios, obtenerPrimerDirectorio } from './utils';
 import { IEventoS3 } from "../interfaces/IEvento";
-import { PREF_LAMBFUNTION, PREF_LAMBPERMISSION, PREF_S3NOTIFICATION } from "../env/variables";
+import { PREF_LAMBFUNTION, PREF_LAMBPERMISSION, PREF_S3NOTIFICATION, PREF_S3OBJECT } from "../env/variables";
 
 export class Funcion implements IFuncion {
   private region: string;
   private awsAccountId: Promise<string>
+  private bucket: TS3;
 
-  constructor() {
+  constructor(bucket: TS3) {
     const config = new pulumi.Config("aws");
     const account = aws.getCallerIdentity({});
     this.region = config.require("region");
     this.awsAccountId = account.then(id => id.accountId)
+    this.bucket = bucket;
   }
   public crearFuncion(arg: IFuncionArgs): TFuncion {
     const crearzip = new CrearZip()
@@ -29,6 +31,13 @@ export class Funcion implements IFuncion {
       archivosExcluidos: arg.codigoFuente.archivosExcluidos
     });
 
+    const funcionZip = new aws.s3.BucketObject(`${PREF_S3OBJECT}${nombreFormateado}`, {
+      bucket: this.bucket.bucket,
+      source: new pulumi.asset.FileArchive(
+        codigoFuente.then((cont) => cont.outputPath)
+      ),
+    }, { dependsOn: [this.bucket] });
+
     const funcion = new aws.lambda.Function(`${PREF_LAMBFUNTION}${eliminarCaracteresEspeciales(nombreDirectorio)}`, {
       name: nombreDirectorio,
       role: arg.roleArn,
@@ -38,9 +47,8 @@ export class Funcion implements IFuncion {
       architectures: ["x86_64"],
       memorySize: arg.memoria || 128,
       timeout: arg.tiempoEjecucion || 3,
-      code: new pulumi.asset.FileArchive(
-        codigoFuente.then((cont) => cont.outputPath)
-      ),
+      s3Bucket: this.bucket.bucket,
+      s3Key: funcionZip.key,
       sourceCodeHash: codigoFuente.then((cont) => cont.outputBase64sha256),
       environment: {
         variables: arg.variablesEntorno,

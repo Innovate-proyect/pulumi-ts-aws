@@ -38,7 +38,7 @@ export class Capa implements ICapa {
     fs.rmSync(workDir, { recursive: true, force: true });
     execSync(`docker rmi ${dockerImageName}`);
 
-    const layerZip = new aws.s3.BucketObject(`${PREF_S3OBJECT}${nombreFormateado}`, {
+    const capaZip = new aws.s3.BucketObject(`${PREF_S3OBJECT}${nombreFormateado}`, {
       bucket: this.bucket.bucket,
       source: new pulumi.asset.FileAsset(`${this.outputDir}/${nArchivo}.zip`),
     }, { dependsOn: [this.bucket] });
@@ -46,11 +46,11 @@ export class Capa implements ICapa {
     const capa = new aws.lambda.LayerVersion(`${PREF_LAMBLAYEVERSION}${nombreFormateado}`, {
       layerName: arg.nombre,
       s3Bucket: this.bucket.bucket,
-      s3Key: layerZip.key,
+      s3Key: capaZip.key,
       compatibleRuntimes: versionesCompatibles,
       description: arg.descripcion,
       sourceCodeHash: generarHashBase64(`${this.outputDir}/${nArchivo}.zip`)
-    }, { dependsOn: [layerZip] });
+    }, { dependsOn: [capaZip] });
 
     return capa
   }

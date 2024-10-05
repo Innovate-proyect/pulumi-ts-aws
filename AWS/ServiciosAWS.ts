@@ -27,7 +27,7 @@ export class ServiciosAWS {
       acl: "private"
     });
     this.capa = new Capa(this.bucket);
-    this.funcion = new Funcion();
+    this.funcion = new Funcion(this.bucket);
   }
 
   crearFuncion(args: IFuncionArgs): TFuncion {

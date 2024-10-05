@@ -53,18 +53,18 @@ class Capa {
         (0, child_process_1.execSync)(`docker run --rm -v ${this.outputDir}:/output ${dockerImageName} bash -c "cp /app/${nArchivo}.zip /output/"`);
         fs.rmSync(workDir, { recursive: true, force: true });
         (0, child_process_1.execSync)(`docker rmi ${dockerImageName}`);
-        const layerZip = new aws.s3.BucketObject(`${variables_1.PREF_S3OBJECT}${nombreFormateado}`, {
+        const capaZip = new aws.s3.BucketObject(`${variables_1.PREF_S3OBJECT}${nombreFormateado}`, {
             bucket: this.bucket.bucket,
             source: new pulumi.asset.FileAsset(`${this.outputDir}/${nArchivo}.zip`),
         }, { dependsOn: [this.bucket] });
         const capa = new aws.lambda.LayerVersion(`${variables_1.PREF_LAMBLAYEVERSION}${nombreFormateado}`, {
             layerName: arg.nombre,
             s3Bucket: this.bucket.bucket,
-            s3Key: layerZip.key,
+            s3Key: capaZip.key,
             compatibleRuntimes: versionesCompatibles,
             description: arg.descripcion,
             sourceCodeHash: (0, utils_1.generarHashBase64)(`${this.outputDir}/${nArchivo}.zip`)
-        }, { dependsOn: [layerZip] });
+        }, { dependsOn: [capaZip] });
         return capa;
     }
 }

@@ -48,9 +48,9 @@ class Funcion {
             archivosExcluidos: arg.codigoFuente.archivosExcluidos
         });
         const funcionZip = new aws.s3.BucketObject(`${variables_1.PREF_S3OBJECT}${nombreFormateado}`, {
-            bucket: this.bucket.bucket,
+            bucket: this.bucket,
             source: new pulumi.asset.FileArchive(codigoFuente.then((cont) => cont.outputPath)),
-        }, { dependsOn: [this.bucket] });
+        });
         const funcion = new aws.lambda.Function(`${variables_1.PREF_LAMBFUNTION}${(0, utils_1.eliminarCaracteresEspeciales)(nombreDirectorio)}`, {
             name: nombreDirectorio,
             role: arg.roleArn,
@@ -60,7 +60,7 @@ class Funcion {
             architectures: ["x86_64"],
             memorySize: arg.memoria || 128,
             timeout: arg.tiempoEjecucion || 3,
-            s3Bucket: this.bucket.bucket,
+            s3Bucket: this.bucket,
             s3Key: funcionZip.key,
             sourceCodeHash: codigoFuente.then((cont) => cont.outputBase64sha256),
             environment: {

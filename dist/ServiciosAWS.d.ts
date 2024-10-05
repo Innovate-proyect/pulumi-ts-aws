@@ -7,10 +7,9 @@ import { ICapaPythonArgs } from "./interfaces/ICapa";
 export declare class ServiciosAWS {
     private funcion;
     private capa;
-    private bucket;
     private projectName;
-    private nombreBucket;
-    constructor();
+    private ptawsBucket;
+    constructor(bucket: string);
     crearFuncion(args: IFuncionArgs): TFuncion;
     crearCapaPython(args: ICapaPythonArgs): TCapa;
 }

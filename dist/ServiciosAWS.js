@@ -24,25 +24,18 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ServiciosAWS = void 0;
-const aws = __importStar(require("@pulumi/aws"));
 const Lambda_1 = require("./models/Lambda");
 const Capa_1 = require("./models/Capa");
-const variables_1 = require("./env/variables");
 const pulumi = __importStar(require("@pulumi/pulumi"));
-const utils_1 = require("./models/utils");
 /**
  * Clase principal que agrupa servicios AWS utilizando Pulumi.
  */
 class ServiciosAWS {
-    constructor() {
+    constructor(bucket) {
         this.projectName = pulumi.getProject();
-        this.nombreBucket = (0, utils_1.eliminarCaracteresEspeciales)(this.projectName);
-        this.bucket = new aws.s3.Bucket(`${variables_1.PREF_S3BUCKET}${this.nombreBucket}`, {
-            bucketPrefix: `${variables_1.PREFIJO}-${this.nombreBucket}-`,
-            acl: "private"
-        });
-        this.capa = new Capa_1.Capa(this.bucket);
-        this.funcion = new Lambda_1.Funcion(this.bucket);
+        this.ptawsBucket = bucket;
+        this.capa = new Capa_1.Capa(this.ptawsBucket);
+        this.funcion = new Lambda_1.Funcion(this.ptawsBucket);
     }
     crearFuncion(args) {
         return this.funcion.crearFuncion(args);

@@ -1,5 +1,5 @@
 import { IFuncionArgs } from "./interfaces/ILambda";
-import { TCapa, TFuncion, TS3 } from "./interfaces/Iglobal";
+import { TCapa, TFuncion } from "./interfaces/Iglobal";
 import { Funcion } from "./models/Lambda";
 import { Capa } from './models/Capa';
 import { ICapaPythonArgs } from "./interfaces/ICapa";

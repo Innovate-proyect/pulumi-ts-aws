@@ -54,7 +54,7 @@ class CrearZip {
                             sourceDir: arg.ruta,
                             excludeSymlinkDirectories: true,
                             excludes: arg.archivosExcluidos,
-                            outputPath: `${process.cwd()}/build/dist/${arg.nombreZip}.zip`
+                            outputPath: `${process.cwd()}/${arg.rutaSalida}/${arg.nombreZip}.zip`
                         });
                     }
                     else {
@@ -62,7 +62,7 @@ class CrearZip {
                             type: "zip",
                             sourceDir: arg.ruta,
                             excludeSymlinkDirectories: false,
-                            outputPath: `${process.cwd()}/build/dist/${arg.nombreZip}.zip`
+                            outputPath: `${process.cwd()}/${arg.rutaSalida}/${arg.nombreZip}.zip`
                         });
                     }
                 }
@@ -70,7 +70,7 @@ class CrearZip {
                     return this.crearArchivoZip({
                         type: "zip",
                         sourceFile: arg.ruta,
-                        outputPath: `${process.cwd()}/build/dist/${arg.nombreZip}.zip`,
+                        outputPath: `${process.cwd()}/${arg.rutaSalida}/${arg.nombreZip}.zip`,
                     });
                 }
                 else {

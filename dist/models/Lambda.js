@@ -45,6 +45,7 @@ class Funcion {
         const codigoFuente = crearzip.comprimirCodigo({
             nombreZip: `fn${arg.runtime}_${nombreFormateado}`,
             ruta: `src/funciones/${arg.codigoFuente.ruta}`,
+            rutaSalida: "dist/lambdas",
             archivosExcluidos: arg.codigoFuente.archivosExcluidos,
         });
         const funcionZip = new aws.s3.BucketObject(`${variables_1.PREF_S3OBJECT}${nombreFormateado}`, {

@@ -8,6 +8,7 @@ const stat = promisify(fs.stat);
 interface IComprimirCodigo {
   ruta: string;
   nombreZip: string;
+  rutaSalida: string;
   archivosExcluidos?: string[] | undefined;
 }
 
@@ -36,21 +37,21 @@ export class CrearZip {
             sourceDir: arg.ruta,
             excludeSymlinkDirectories: true,
             excludes: arg.archivosExcluidos,
-            outputPath: `${process.cwd()}/build/dist/${arg.nombreZip}.zip`
+            outputPath: `${process.cwd()}/${arg.rutaSalida}/${arg.nombreZip}.zip`
           });
         } else {
           return this.crearArchivoZip({
             type: "zip",
             sourceDir: arg.ruta,
             excludeSymlinkDirectories: false,
-            outputPath: `${process.cwd()}/build/dist/${arg.nombreZip}.zip`
+            outputPath: `${process.cwd()}/${arg.rutaSalida}/${arg.nombreZip}.zip`
           });
         }
       } else if (stats.isFile()) {
         return this.crearArchivoZip({
           type: "zip",
           sourceFile: arg.ruta,
-          outputPath: `${process.cwd()}/build/dist/${arg.nombreZip}.zip`,
+          outputPath: `${process.cwd()}/${arg.rutaSalida}/${arg.nombreZip}.zip`,
         });
       } else {
         throw new Error(`${rutaCompleta} no es ni un archivo ni un directorio.`);

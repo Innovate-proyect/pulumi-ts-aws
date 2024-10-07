@@ -38,6 +38,7 @@ export class Funcion implements IFuncion {
     const codigoFuente = crearzip.comprimirCodigo({
       nombreZip: `fn${arg.runtime}_${nombreFormateado}`,
       ruta: `src/funciones/${arg.codigoFuente.ruta}`,
+      rutaSalida: "dist/lambdas",
       archivosExcluidos: arg.codigoFuente.archivosExcluidos,
     });
 

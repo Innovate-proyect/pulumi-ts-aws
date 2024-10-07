@@ -36,13 +36,13 @@ class Capa {
     constructor(bucket) {
         const config = new pulumi.Config("aws");
         this.region = config.require("region");
-        this.outputDir = path.join(process.cwd(), 'dist', 'layers');
+        this.outputDir = path.join(process.cwd(), "dist", "layers");
         this.bucket = bucket;
     }
     crearCapaPython(arg) {
         const nombreFormateado = (0, utils_1.eliminarCaracteresEspeciales)(arg.nombre);
         const pythonVersion = arg.versionesCompatibles[0];
-        const versionesCompatibles = arg.versionesCompatibles.map(v => `python${v}`);
+        const versionesCompatibles = arg.versionesCompatibles.map((v) => `python${v}`);
         const nArchivo = `lyPython${pythonVersion}_${arg.nombre}`;
         const dockerImageName = `python-build-${arg.nombre}`;
         if (!fs.existsSync(this.outputDir)) {
@@ -63,7 +63,7 @@ class Capa {
             s3Key: capaZip.key,
             compatibleRuntimes: versionesCompatibles,
             description: arg.descripcion,
-            sourceCodeHash: (0, utils_1.generarHashBase64)(`${this.outputDir}/${nArchivo}.zip`)
+            sourceCodeHash: (0, utils_1.generarHashBase64)(`${this.outputDir}/${nArchivo}.zip`),
         }, { dependsOn: [capaZip] });
         return capa;
     }

@@ -34,7 +34,7 @@ class Funcion {
         const config = new pulumi.Config("aws");
         const account = aws.getCallerIdentity({});
         this.region = config.require("region");
-        this.awsAccountId = account.then(id => id.accountId);
+        this.awsAccountId = account.then((id) => id.accountId);
         this.bucket = bucket;
     }
     crearFuncion(arg) {
@@ -45,7 +45,7 @@ class Funcion {
         const codigoFuente = crearzip.comprimirCodigo({
             nombreZip: `fn${arg.runtime}_${nombreFormateado}`,
             ruta: `src/funciones/${arg.codigoFuente.ruta}`,
-            archivosExcluidos: arg.codigoFuente.archivosExcluidos
+            archivosExcluidos: arg.codigoFuente.archivosExcluidos,
         });
         const funcionZip = new aws.s3.BucketObject(`${variables_1.PREF_S3OBJECT}${nombreFormateado}`, {
             bucket: this.bucket,
@@ -77,12 +77,12 @@ class Funcion {
             },
             tags: arg.etiquetas,
         }, {
-            dependsOn: arg.dependencias
+            dependsOn: arg.dependencias,
         });
         if (arg.eventos) {
             for (const evento of arg.eventos) {
                 switch (evento.tipo) {
-                    case 's3':
+                    case "s3":
                         this.crearEventoS3(funcion, evento.parametros, nombreRecursoFuncion);
                         break;
                     default:
@@ -103,17 +103,17 @@ class Funcion {
             function: funcion.arn,
             principal: "s3.amazonaws.com",
             sourceAccount: this.awsAccountId,
-            sourceArn: bucket.then(s3 => s3.arn),
+            sourceArn: bucket.then((s3) => s3.arn),
         }, { dependsOn: [funcion] });
         new aws.s3.BucketNotification(`${variables_1.PREF_S3NOTIFICATION}${(0, utils_1.eliminarCaracteresEspeciales)(eventoS3.nombreBucket)}${nombreRecursoFuncion}`, {
-            bucket: bucket.then(s3 => s3.id),
+            bucket: bucket.then((s3) => s3.id),
             lambdaFunctions: [
                 {
                     lambdaFunctionArn: funcion.arn,
                     events: eventoS3.eventos,
                     filterPrefix: eventoS3.prefigo,
                     filterSuffix: eventoS3.extencion,
-                }
+                },
             ],
         }, {
             dependsOn: [permisosS3],

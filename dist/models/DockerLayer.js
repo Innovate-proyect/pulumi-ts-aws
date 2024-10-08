@@ -42,19 +42,19 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-RUN python${pythonVersion} -m venv create_layer
-
-RUN / bin / bash - c "source create_layer/bin/activate && pip install --no-cache-dir -r requirements.txt"
+RUN python${pythonVersion} -m venv create_layer && \
+    create_layer/bin/pip install --no-cache-dir -r requirements.txt
 
 RUN mkdir python
 
-RUN cp - r create_layer / lib / python${pythonVersion} /site-packages/ * python /
+RUN cp -r create_layer/lib python/
+
 
 RUN apt-get update && apt-get install -y zip
 
 RUN zip -r ${nArchivo}.zip /python
 
-CMD ["echo", "Python dependencies packaged!"]
+CMD ["echo", "Layer created and packaged!"]
 `;
         // Crear los archivos temporales
         fs.writeFileSync(dockerfilePath, dockerfileContent);

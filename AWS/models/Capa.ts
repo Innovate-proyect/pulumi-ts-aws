@@ -63,7 +63,7 @@ export class Capa implements ICapa {
         s3Bucket: this.bucket,
         s3Key: capaZip.key,
         compatibleRuntimes: versionesCompatibles,
-        compatibleArchitectures: ["arm64"],
+        compatibleArchitectures: ["x86_64"],
         description: arg.descripcion,
         sourceCodeHash: generarHashBase64(`${this.outputDir}/${nArchivo}.zip`),
       },

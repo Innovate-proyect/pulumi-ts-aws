@@ -49,7 +49,7 @@ class Capa {
             fs.mkdirSync(this.outputDir, { recursive: true });
         }
         const { dockerfilePath, workDir } = new DockerLayer_1.DockerLayer().archivosTempPython(arg.requirements, pythonVersion, nArchivo);
-        (0, child_process_1.execSync)(` docker build -q -t ${dockerImageName} -f ${dockerfilePath} ${workDir} `);
+        (0, child_process_1.execSync)(`docker build -q -t ${dockerImageName} -f ${dockerfilePath} ${workDir}`);
         (0, child_process_1.execSync)(`docker run --rm -v ${this.outputDir}:/output ${dockerImageName} bash -c "cp /app/${nArchivo}.zip /output/"`);
         fs.rmSync(workDir, { recursive: true, force: true });
         (0, child_process_1.execSync)(`docker rmi ${dockerImageName}`);

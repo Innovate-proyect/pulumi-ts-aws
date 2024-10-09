@@ -40,7 +40,7 @@ export class Capa implements ICapa {
       nArchivo
     );
     execSync(
-      ` docker build -q -t ${dockerImageName} -f ${dockerfilePath} ${workDir} `
+      `docker build -q -t ${dockerImageName} -f ${dockerfilePath} ${workDir}`
     );
     execSync(
       `docker run --rm -v ${this.outputDir}:/output ${dockerImageName} bash -c "cp /app/${nArchivo}.zip /output/"`

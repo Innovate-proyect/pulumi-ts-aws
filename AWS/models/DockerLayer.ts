@@ -31,7 +31,7 @@ RUN mkdir python
 
 RUN cp -r create_layer/lib python/
 
-RUN zip -r ${nArchivo}.zip /python
+RUN zip -r ${nArchivo}.zip python/
 
 CMD ["echo", "Layer created and packaged!"]
 `;

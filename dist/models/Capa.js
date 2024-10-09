@@ -62,6 +62,7 @@ class Capa {
             s3Bucket: this.bucket,
             s3Key: capaZip.key,
             compatibleRuntimes: versionesCompatibles,
+            compatibleArchitectures: ["arm64"],
             description: arg.descripcion,
             sourceCodeHash: (0, utils_1.generarHashBase64)(`${this.outputDir}/${nArchivo}.zip`),
         }, { dependsOn: [capaZip] });

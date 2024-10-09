@@ -50,7 +50,7 @@ RUN /bin/bash -c "source create_layer/bin/activate && pip install --upgrade pip"
 
 COPY requirements.txt .
 
-RUN /bin/bash -c "source create_layer/bin/activate && pip install --no-cache-dir -r requirements.txt"
+RUN /bin/bash -c "source create_layer/bin/activate && pip install -r requirements.txt"
 
 RUN mkdir python
 

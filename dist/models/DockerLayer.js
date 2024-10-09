@@ -36,7 +36,7 @@ class DockerLayer {
         const dockerfilePath = path_1.default.join(workDir, 'Dockerfile');
         const requirementsPath = path_1.default.join(workDir, 'requirements.txt');
         const dockerfileContent = `
-FROM python:${pythonVersion}
+FROM --platform=linux/amd64 python:${pythonVersion}
 
 WORKDIR /app
 

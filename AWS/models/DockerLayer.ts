@@ -11,7 +11,7 @@ export class DockerLayer {
 
 
     const dockerfileContent = `
-FROM python:${pythonVersion}
+FROM --platform=linux/amd64 python:${pythonVersion}
 
 WORKDIR /app
 

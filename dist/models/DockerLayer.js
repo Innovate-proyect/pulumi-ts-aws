@@ -40,19 +40,19 @@ FROM python:${pythonVersion}
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y zip
+
 COPY requirements.txt .
 
-RUN python${pythonVersion} -m venv create_layer && \
-    create_layer/bin/pip install --no-cache-dir -r requirements.txt
+RUN python3.11 -m venv create_layer
+
+RUN /bin/bash -c "source create_layer/bin/activate && pip install --no-cache-dir -r requirements.txt"
 
 RUN mkdir python
 
 RUN cp -r create_layer/lib python/
 
-
-RUN apt-get update && apt-get install -y zip
-
-RUN zip -r ${nArchivo}.zip /python
+RUN zip -r ${nArchivo}.zip python
 
 CMD ["echo", "Layer created and packaged!"]
 `;

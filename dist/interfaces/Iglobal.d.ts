@@ -10,7 +10,7 @@ export type TPInputNumero = pulumi.Input<number>;
 export type TPInputArrayArn = pulumi.Input<TPInputArn[]>;
 export type TPInputArrayCadena = pulumi.Input<TPInputCadena[]>;
 export type TPInputMapCadena = pulumi.Input<{
-    [key: string]: TPInputCadena;
+    [key: string]: TPInputCadena | TPOutputAny;
 }>;
 export type TPInputDependencias = pulumi.Input<pulumi.Input<pulumi.Resource>[]>;
 export type TPythonVersion = "3.8" | "3.9" | "3.10" | "3.11" | "3.12";

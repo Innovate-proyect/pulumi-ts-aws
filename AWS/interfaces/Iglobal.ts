@@ -12,7 +12,7 @@ export type TPInputNumero = pulumi.Input<number>;
 export type TPInputArrayArn = pulumi.Input<TPInputArn[]>;
 export type TPInputArrayCadena = pulumi.Input<TPInputCadena[]>;
 export type TPInputMapCadena = pulumi.Input<{
-  [key: string]: TPInputCadena;
+  [key: string]: TPInputCadena | TPOutputAny;
 }>;
 
 export type TPInputDependencias = pulumi.Input<pulumi.Input<pulumi.Resource>[]>;

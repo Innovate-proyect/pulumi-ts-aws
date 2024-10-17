@@ -1,5 +1,5 @@
 {
-  "name": "pulumi-serverless-aws",
+  "name": "pulumi-ts-aws",
   "version": "1.0.0",
   "description": "Librería para desarrollar tecnología Serverless con Pulumi",
   "main": "./dist/index.js",
@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:jhansdelacruz/pulumi-serverless-aws.git"
+    "url": "https://github.com/Innovate-proyect/pulumi-ts-aws.git"
   },
   "keywords": [
     "pulumi-ts-aws",

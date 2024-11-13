@@ -35,7 +35,6 @@ function createRole(nombre, servicio, descripcion, politicasArn = [], tags) {
         }),
         name: `${variables_1.PREFIJO}_${nombre}`,
         description: descripcion,
-        managedPolicyArns: [aws.iam.ManagedPolicy.AWSLambdaBasicExecutionRole],
         tags: tags,
     });
     politicasArn.forEach((arn) => {

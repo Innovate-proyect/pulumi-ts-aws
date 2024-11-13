@@ -16,6 +16,9 @@ class RecursosLabs {
     createRole(nombre, descripcion, servicio, politicasArn = [], tags) {
         return (0, labs_1.createRole)(nombre, descripcion, servicio, politicasArn, tags);
     }
+    createLambdaRole(nombre, descripcion, politicasArn = [], tags) {
+        return (0, labs_1.createLambdaRole)(nombre, descripcion, politicasArn, tags);
+    }
     crearOsngPolitica(nombre, descripcion, acciones, recursos, dependencias, tags) {
         return (0, labs_1.crearOsngPolitica)(nombre, descripcion, acciones, recursos, dependencias, tags);
     }

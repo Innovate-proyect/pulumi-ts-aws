@@ -5,6 +5,7 @@ import {
   createBucketWeb,
   createRole,
   crearOsngPolitica,
+  createLambdaRole,
 } from "./labs";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -37,6 +38,14 @@ export class RecursosLabs {
     tags?: aws.Tags
   ): aws.iam.Role {
     return createRole(nombre, descripcion, servicio, politicasArn, tags);
+  }
+  public createLambdaRole(
+    nombre: string,
+    descripcion: string,
+    politicasArn: pulumi.Input<string>[] = [],
+    tags?: aws.Tags
+  ): aws.iam.Role {
+    return createLambdaRole(nombre, descripcion, politicasArn, tags);
   }
   public crearOsngPolitica(
     nombre: string,

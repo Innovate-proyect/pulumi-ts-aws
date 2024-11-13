@@ -3,19 +3,19 @@ import { PREFIJO } from "../env/variables";
 import { stringTo8Char } from "../models/utils";
 import * as pulumi from "@pulumi/pulumi";
 
-export function createRole(
+export function createLambdaRole(
   nombre: string,
-  servicio: string,
   descripcion: string,
   politicasArn: pulumi.Input<string>[] = [],
   tags?: aws.Tags
 ) {
   const rolLambda = new aws.iam.Role(`${PREFIJO}_${nombre}`, {
     assumeRolePolicy: aws.iam.assumeRolePolicyForPrincipal({
-      Service: servicio,
+      Service: "lambda.amazonaws.com",
     }),
     name: `${PREFIJO}_${nombre}`,
     description: descripcion,
+    managedPolicyArns: [aws.iam.ManagedPolicy.AWSLambdaBasicExecutionRole],
     tags: tags,
   });
 

@@ -18,3 +18,4 @@ __exportStar(require("./osng_politica"), exports);
 __exportStar(require("./rol_lambda"), exports);
 __exportStar(require("./s3_publico"), exports);
 __exportStar(require("./s3_web"), exports);
+__exportStar(require("./s3_privado"), exports);

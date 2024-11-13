@@ -4,6 +4,9 @@ exports.RecursosLabs = void 0;
 const labs_1 = require("./labs");
 class RecursosLabs {
     constructor() { }
+    createBucketPrivado(nombre, carpetas, tags) {
+        return (0, labs_1.createBucketPrivado)(nombre, carpetas, tags);
+    }
     createBucketPublico(nombre, carpetas, tags) {
         return (0, labs_1.createBucketPublico)(nombre, carpetas, tags);
     }

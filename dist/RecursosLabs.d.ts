@@ -2,6 +2,7 @@ import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
 export declare class RecursosLabs {
     constructor();
+    createBucketPrivado(nombre: string, carpetas?: string[], tags?: aws.Tags): aws.s3.Bucket;
     createBucketPublico(nombre: string, carpetas?: string[], tags?: aws.Tags): aws.s3.Bucket;
     createBucketWeb(nombre: string, tags?: aws.Tags): aws.s3.Bucket;
     createLambdaRole(nombre: string, descripcion: string, politicasArn?: pulumi.Input<string>[], tags?: aws.Tags): aws.iam.Role;

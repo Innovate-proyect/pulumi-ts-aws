@@ -1,5 +1,6 @@
 import * as aws from "@pulumi/aws";
 import {
+  createBucketPrivado,
   createBucketPublico,
   createBucketWeb,
   createLambdaRole,
@@ -9,6 +10,14 @@ import * as pulumi from "@pulumi/pulumi";
 
 export class RecursosLabs {
   constructor() {}
+
+  public createBucketPrivado(
+    nombre: string,
+    carpetas?: string[],
+    tags?: aws.Tags
+  ): aws.s3.Bucket {
+    return createBucketPrivado(nombre, carpetas, tags);
+  }
 
   public createBucketPublico(
     nombre: string,

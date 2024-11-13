@@ -3,7 +3,7 @@ import {
   createBucketPrivado,
   createBucketPublico,
   createBucketWeb,
-  createLambdaRole,
+  createRole,
   crearOsngPolitica,
 } from "./labs";
 import * as pulumi from "@pulumi/pulumi";
@@ -29,13 +29,14 @@ export class RecursosLabs {
   public createBucketWeb(nombre: string, tags?: aws.Tags): aws.s3.Bucket {
     return createBucketWeb(nombre, tags);
   }
-  public createLambdaRole(
+  public createRole(
     nombre: string,
     descripcion: string,
+    servicio: string,
     politicasArn: pulumi.Input<string>[] = [],
     tags?: aws.Tags
   ): aws.iam.Role {
-    return createLambdaRole(nombre, descripcion, politicasArn, tags);
+    return createRole(nombre, descripcion, servicio, politicasArn, tags);
   }
   public crearOsngPolitica(
     nombre: string,

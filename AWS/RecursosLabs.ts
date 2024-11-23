@@ -6,11 +6,12 @@ import {
   createRole,
   crearOsngPolitica,
   createLambdaRole,
+  createApiGatewayRole
 } from "./labs";
 import * as pulumi from "@pulumi/pulumi";
 
 export class RecursosLabs {
-  constructor() {}
+  constructor() { }
 
   public createBucketPrivado(
     nombre: string,
@@ -46,6 +47,13 @@ export class RecursosLabs {
     tags?: aws.Tags
   ): aws.iam.Role {
     return createLambdaRole(nombre, descripcion, politicasArn, tags);
+  }
+  public createApiGatewayRole(
+    nombre: string,
+    descripcion: string,
+    tags?: aws.Tags
+  ): aws.iam.Role {
+    return createApiGatewayRole(nombre, descripcion, tags);
   }
   public crearOsngPolitica(
     nombre: string,

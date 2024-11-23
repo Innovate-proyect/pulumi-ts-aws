@@ -19,6 +19,9 @@ class RecursosLabs {
     createLambdaRole(nombre, descripcion, politicasArn = [], tags) {
         return (0, labs_1.createLambdaRole)(nombre, descripcion, politicasArn, tags);
     }
+    createApiGatewayRole(nombre, descripcion, tags) {
+        return (0, labs_1.createApiGatewayRole)(nombre, descripcion, tags);
+    }
     crearOsngPolitica(nombre, descripcion, acciones, recursos, dependencias, tags) {
         return (0, labs_1.crearOsngPolitica)(nombre, descripcion, acciones, recursos, dependencias, tags);
     }

@@ -48,11 +48,15 @@ class Capa {
         if (!fs.existsSync(this.outputDir)) {
             fs.mkdirSync(this.outputDir, { recursive: true });
         }
-        const { dockerfilePath, workDir } = new DockerLayer_1.DockerLayer().archivosTempPython(arg.requirements, pythonVersion, nArchivo);
-        (0, child_process_1.execSync)(`docker build --platform linux/amd64 -q -t ${dockerImageName} -f ${dockerfilePath} ${workDir}`);
-        (0, child_process_1.execSync)(`docker run --rm -v ${this.outputDir}:/output ${dockerImageName} bash -c "cp /app/${nArchivo}.zip /output/"`);
-        fs.rmSync(workDir, { recursive: true, force: true });
-        (0, child_process_1.execSync)(`docker rmi ${dockerImageName}`);
+        const { dockerfilePath, workDir } = new DockerLayer_1.DockerLayer().archivosTempPython(arg.requirements, pythonVersion, nArchivo, this.outputDir);
+        try {
+            (0, child_process_1.execSync)(`docker build --platform linux/amd64 -q -t ${dockerImageName} -f ${dockerfilePath} ${workDir}`);
+            (0, child_process_1.execSync)(`docker run --rm -v ${this.outputDir}:/output ${dockerImageName} bash -c "cp /app/${nArchivo}.zip /output/"`);
+        }
+        finally {
+            fs.rmSync(workDir, { recursive: true, force: true });
+            (0, child_process_1.execSync)(`docker rmi ${dockerImageName}`);
+        }
         const capaZip = new aws.s3.BucketObject(`${variables_1.PREF_S3OBJECT}${nombreFormateado}`, {
             bucket: this.bucket,
             source: new pulumi.asset.FileAsset(`${this.outputDir}/${nArchivo}.zip`),

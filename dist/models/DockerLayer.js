@@ -29,10 +29,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DockerLayer = void 0;
 const fs = __importStar(require("fs"));
 const path_1 = __importDefault(require("path"));
-const os = __importStar(require("os"));
 class DockerLayer {
-    archivosTempPython(requirements, pythonVersion, nArchivo) {
-        const workDir = fs.mkdtempSync(path_1.default.join(os.tmpdir(), 'espacioparalayer-'));
+    archivosTempPython(requirements, pythonVersion, nArchivo, outputDir) {
+        const workDir = path_1.default.join(outputDir, `.tmp-${Date.now()}`);
+        fs.mkdirSync(workDir, { recursive: true });
         const dockerfilePath = path_1.default.join(workDir, 'Dockerfile');
         const requirementsPath = path_1.default.join(workDir, 'requirements.txt');
         const dockerfileContent = `
@@ -52,15 +52,12 @@ COPY requirements.txt .
 
 RUN /bin/bash -c "source create_layer/bin/activate && pip install -r requirements.txt"
 
-RUN mkdir python
-
-RUN cp -r create_layer/lib python/
-
-RUN zip -r ${nArchivo}.zip python/
+RUN mkdir -p python && \
+    cp -r create_layer/lib python/ && \
+    zip -r ${nArchivo}.zip python/
 
 CMD ["echo", "Layer created and packaged!"]
 `;
-        // Crear los archivos temporales
         fs.writeFileSync(dockerfilePath, dockerfileContent);
         fs.writeFileSync(requirementsPath, requirements.join('\n'));
         return { dockerfilePath, workDir };

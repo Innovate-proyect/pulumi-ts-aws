@@ -1,4 +1,5 @@
 import * as aws from "@pulumi/aws";
+import { creatApiRest } from "./labs";
 import * as pulumi from "@pulumi/pulumi";
 export declare class RecursosLabs {
     constructor();
@@ -9,4 +10,9 @@ export declare class RecursosLabs {
     createLambdaRole(nombre: string, descripcion: string, politicasArn?: pulumi.Input<string>[], tags?: aws.Tags): aws.iam.Role;
     createApiGatewayRole(nombre: string, descripcion: string, tags?: aws.Tags): aws.iam.Role;
     crearOsngPolitica(nombre: string, descripcion: string, acciones: string[], recursos: pulumi.Output<string>[] | string[], dependencias?: pulumi.Input<pulumi.Input<pulumi.Resource>[]>, tags?: aws.Tags): aws.iam.Policy;
+    crearApiRes(arg: {
+        nombre: string;
+        descripcion: string;
+        etiquetas: aws.Tags;
+    }): creatApiRest;
 }

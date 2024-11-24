@@ -21,3 +21,4 @@ __exportStar(require("./s3_web"), exports);
 __exportStar(require("./s3_privado"), exports);
 __exportStar(require("./rol_lambda"), exports);
 __exportStar(require("./rol_apigateway"), exports);
+__exportStar(require("./api_lambda"), exports);

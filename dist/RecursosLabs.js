@@ -25,5 +25,8 @@ class RecursosLabs {
     crearOsngPolitica(nombre, descripcion, acciones, recursos, dependencias, tags) {
         return (0, labs_1.crearOsngPolitica)(nombre, descripcion, acciones, recursos, dependencias, tags);
     }
+    crearApiRes(arg) {
+        return new labs_1.creatApiRest(arg);
+    }
 }
 exports.RecursosLabs = RecursosLabs;

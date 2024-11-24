@@ -6,7 +6,8 @@ import {
   createRole,
   crearOsngPolitica,
   createLambdaRole,
-  createApiGatewayRole
+  createApiGatewayRole,
+  creatApiRest
 } from "./labs";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -71,5 +72,9 @@ export class RecursosLabs {
       dependencias,
       tags
     );
+  }
+  public crearApiRes(arg: { nombre: string, descripcion: string, etiquetas: aws.Tags }) {
+    return new creatApiRest(arg)
+
   }
 }

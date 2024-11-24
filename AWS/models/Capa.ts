@@ -33,21 +33,23 @@ export class Capa implements ICapa {
     if (!fs.existsSync(this.outputDir)) {
       fs.mkdirSync(this.outputDir, { recursive: true });
     }
-
     const { dockerfilePath, workDir } = new DockerLayer().archivosTempPython(
       arg.requirements,
       pythonVersion,
-      nArchivo
+      nArchivo,
+      this.outputDir
     );
-    execSync(
-      `docker build --platform linux/amd64 -q -t ${dockerImageName} -f ${dockerfilePath} ${workDir}`
-    );
-    execSync(
-      `docker run --rm -v ${this.outputDir}:/output ${dockerImageName} bash -c "cp /app/${nArchivo}.zip /output/"`
-    );
-    fs.rmSync(workDir, { recursive: true, force: true });
-    execSync(`docker rmi ${dockerImageName}`);
-
+    try {
+      execSync(
+        `docker build --platform linux/amd64 -q -t ${dockerImageName} -f ${dockerfilePath} ${workDir}`
+      );
+      execSync(
+        `docker run --rm -v ${this.outputDir}:/output ${dockerImageName} bash -c "cp /app/${nArchivo}.zip /output/"`
+      );
+    } finally {
+      fs.rmSync(workDir, { recursive: true, force: true });
+      execSync(`docker rmi ${dockerImageName}`);
+    }
     const capaZip = new aws.s3.BucketObject(
       `${PREF_S3OBJECT}${nombreFormateado}`,
       {
@@ -55,7 +57,6 @@ export class Capa implements ICapa {
         source: new pulumi.asset.FileAsset(`${this.outputDir}/${nArchivo}.zip`),
       }
     );
-
     const capa = new aws.lambda.LayerVersion(
       `${PREF_LAMBLAYEVERSION}${nombreFormateado}`,
       {
@@ -69,7 +70,6 @@ export class Capa implements ICapa {
       },
       { dependsOn: [capaZip] }
     );
-
     return capa;
   }
 }

@@ -14,7 +14,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./osng_politica"), exports);
+__exportStar(require("./nueva_politica"), exports);
 __exportStar(require("./rol"), exports);
 __exportStar(require("./s3_publico"), exports);
 __exportStar(require("./s3_web"), exports);

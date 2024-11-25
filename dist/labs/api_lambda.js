@@ -229,7 +229,7 @@ class ResourceBuilder {
         }));
     }
     createLambdaPermission(fnLambda) {
-        new aws.lambda.Permission(`${variables_1.PREFIJO}_${this.context.nombre}-permiso-${this.context.hashLambda}`, {
+        new aws.lambda.Permission(`${variables_1.PREF_LAMBPERMISSION}_${this.context.nombre}-permiso-${this.context.hashLambda}`, {
             action: "lambda:InvokeFunction",
             function: fnLambda.name,
             principal: "apigateway.amazonaws.com",

@@ -2,7 +2,7 @@ import * as aws from "@pulumi/aws";
 import { PREFIJO } from "../env/variables";
 import * as pulumi from "@pulumi/pulumi";
 
-export function crearOsngPolitica(
+export function crearPolitica(
   nombre: string,
   descripcion: string,
   acciones: string[],

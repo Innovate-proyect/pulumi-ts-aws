@@ -4,7 +4,7 @@ import {
   createBucketPublico,
   createBucketWeb,
   createRole,
-  crearOsngPolitica,
+  crearPolitica,
   createLambdaRole,
   createApiGatewayRole,
   creatApiRest
@@ -56,7 +56,7 @@ export class RecursosLabs {
   ): aws.iam.Role {
     return createApiGatewayRole(nombre, descripcion, tags);
   }
-  public crearOsngPolitica(
+  public crearPolitica(
     nombre: string,
     descripcion: string,
     acciones: string[],
@@ -64,7 +64,7 @@ export class RecursosLabs {
     dependencias?: pulumi.Input<pulumi.Input<pulumi.Resource>[]>,
     tags?: aws.Tags
   ): aws.iam.Policy {
-    return crearOsngPolitica(
+    return crearPolitica(
       nombre,
       descripcion,
       acciones,

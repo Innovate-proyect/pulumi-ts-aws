@@ -1,6 +1,6 @@
 import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
-import { PREFIJO } from "../env/variables";
+import { PREF_LAMBPERMISSION, PREFIJO } from "../env/variables";
 import { stringTo8Char } from "../models/utils";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "HEAD" | "OPTIONS";
@@ -316,7 +316,7 @@ class ResourceBuilder {
 
   createLambdaPermission(fnLambda: aws.lambda.Function): ResourceBuilder {
     new aws.lambda.Permission(
-      `${PREFIJO}_${this.context.nombre}-permiso-${this.context.hashLambda}`,
+      `${PREF_LAMBPERMISSION}_${this.context.nombre}-permiso-${this.context.hashLambda}`,
       {
         action: "lambda:InvokeFunction",
         function: fnLambda.name,

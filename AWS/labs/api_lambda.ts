@@ -223,17 +223,7 @@ class ResourceBuilder {
         httpMethod: this.context.mainMethod!.httpMethod,
         statusCode: this.context.methodResponse!.statusCode,
         responseTemplates: {
-          "application/json": `
-          #set($inputRoot = $input.path('$'))
-          {
-            "body": $inputRoot.body,
-            "meta": {
-              "timestamp": "$context.requestTime",
-              "path": "$context.resourcePath",
-              "statusCode": $inputRoot.statusCode,
-              "requestId": "$context.requestId"
-            }
-          }`
+          "application/json": ""
         },
         responseParameters: {
           "method.response.header.Access-Control-Allow-Origin": "'*'"
